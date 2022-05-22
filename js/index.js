@@ -6,82 +6,62 @@ let cardA, cardB;
 
 let disableDeck = false;
 
-function flipCard(e)
-{
-    let clickedCard = e.target;
-    clickedCard.classList.add("flip");
-
-    if(clickedCard !== cardA && !disableDeck)
-    {
+function flipCard({target: clickedCard}) {
+    if(cardA !== clickedCard && !disableDeck) {
         clickedCard.classList.add("flip");
-        if(!cardA)
-        {
+        if(!cardA) {
             return cardA = clickedCard;
         }
-
-        cardB         = clickedCard;
-        disableDeck   = true
-        let cardAimg  = cardA.querySelector("img").src,
-        cardBimg      = cardB.querySelector("img").src;
-        matchCards(cardAimg, cardBimg);
+        cardB = clickedCard;
+        disableDeck = true;
+        let imgA = cardA.querySelector(".back-view img").src,
+        imgB = cardB.querySelector(".back-view img").src;
+        matchCards(imgA, imgB);
     }
 }
 
-function matchCards(imgA, imgB)
-{
-    if(imgA == imgB)
-    {
-       matchedCard++;
-
-       if(matchedCard == 8)
-       {
-          setTimeout(()=>
-          {
-            return shuffleCard();
-          }, 1000);
-       }
-
-       cardA.removeEventListener("click", flipCard);
-       cardB.removeEventListener("click", flipCard);
-       cardA = cardB = "";
-       return disableDeck   = false;
+function matchCards(imgA, imgB) {
+    if(imgA === imgB) {
+        matched++;
+        if(matched == 8) {
+            setTimeout(() => {
+                return shuffleCard();
+            }, 1000);
+        }
+        cardA.removeEventListener("click", flipCard);
+        cardB.removeEventListener("click", flipCard);
+        cardA = cardB = "";
+        return disableDeck = false;
     }
-
-    setTimeout(() =>
-    {
+    setTimeout(() => {
         cardA.classList.add("error");
-        cardB.classList.add("error");
+        cardB.classList.add("shake");
     }, 400);
 
-    setTimeout(() =>
-    {
+    setTimeout(() => {
         cardA.classList.remove("error", "flip");
         cardB.classList.remove("error", "flip");
         cardA = cardB = "";
-        disableDeck   = false;
+        disableDeck = false;
     }, 1200);
 }
 
-function shuffleCard()
-{
-    matchedCard = 0;
-    cardA = cardB = "";
+function shuffleCard() {
+    matched = 0;
     disableDeck = false;
-    let cardArray = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
-    cardArray.sort(()=> Math.random() > 0.5 ? 1 : -1);
-
-    cards.forEach((card, index) =>
-        {
-            card.classList.remove("flip");
-            let imgTag = card.querySelector("img");
-            imgTag.src = `./img/${cardArray[index]}.png`;
-            card.addEventListener("click", flipCard);
-        });
+    cardA = cardB = "";
+    let arr = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
+    arr.sort(() => Math.random() > 0.5 ? 1 : -1);
+    cards.forEach((card, i) => {
+        card.classList.remove("flip");
+        let imgTag = card.querySelector(".back-view img");
+        imgTag.src = `img/${arr[i]}.png`;
+        card.addEventListener("click", flipCard);
+    });
 }
 
 shuffleCard();
-
-cards.forEach(card =>
-    {
-        card.addEventListener("click", flipCard);
-    });
+    
+cards.forEach(card => {
+    card.addEventListener("click", flipCard);
+});
